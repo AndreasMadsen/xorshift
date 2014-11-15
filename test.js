@@ -1,7 +1,6 @@
 
-var os = require('os');
 var test = require('tap').test;
-var xorshift = require('xorshift');
+var xorshift = require('./xorshift.js');
 
 var reference = require('./reference.json');
 
