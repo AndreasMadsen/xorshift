@@ -22,7 +22,12 @@ int main(int argc, char *argv[]) {
     length = atoi(argv[1]);
   }
 
+	printf("[\n");
   for (int i = 0; i < length; i++) {
-    printf("%016llX\n", xorshift128plus());
+    printf("  \"%016llX\"", xorshift128plus());
+		if (i < length - 1) {
+			printf(",\n");
+		}
   }
+	printf("\n]\n");
 }
