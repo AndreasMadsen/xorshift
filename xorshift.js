@@ -1,8 +1,5 @@
 
-var bview = require('binary-view');
-
 var s = new Uint32Array(4);
-var s16 = new Uint16Array(s.buffer);
 
 function leftShift(read, write, amount) {
   var s0 = read[0];
