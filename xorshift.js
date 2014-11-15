@@ -1,4 +1,3 @@
-
 var s = new Uint32Array(4);
 
 function leftShift(read, write, amount) {
@@ -53,15 +52,17 @@ function add(readA, readB, write) {
 s[1] = 1;
 s[3] = 2;
 
+var t1 = new Uint32Array(2);
+var t2 = new Uint32Array(2);
+
+var s1 = new Uint32Array(2);
+var s0 = new Uint32Array(2);
+
 function xorshift() {
-  var t1 = new Uint32Array(2);
-  var t2 = new Uint32Array(2);
-
-  // uint64_t s1 = s[ 0 ];
-  var s1 = new Uint32Array(s.subarray(0, 2));
-
-  // const uint64_t s0 = s[ 1 ];
-  var s0 = new Uint32Array(s.subarray(2, 4));
+   // uint64_t s1 = s[ 0 ];
+   s1.set(s.subarray(0, 2));
+   // const uint64_t s0 = s[ 1 ];
+   s0.set(s.subarray(2, 4));
 
   // s[ 0 ] = s0;
   s[0] = s0[0];
