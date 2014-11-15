@@ -5,7 +5,8 @@
   "author": "Andreas Madsen <amwebdk@gmail.com>",
   "main": "./xorshift.js",
   "scripts": {
-    "test": "tap test.js"
+    "test": "tap test.js",
+    "benchmark": "node ./benchmark.js"
   },
   "repository" : {
     "type": "git",
