@@ -23,30 +23,13 @@ function rightShift(read, write, amount) {
   write[0] = s0 >>> amount;
 }
 
-function add(readA, readB, write) {
-  var readA16 = new Uint16Array(readA.buffer);
-  var readB16 = new Uint16Array(readB.buffer);
-  var write16 = new Uint16Array(write.buffer);
+function add(s1, s2, dest) {
+   var LSBSum = s1[1] + s2[1];
 
-  var a00 = readA16[2];
-  var a01 = readA16[3];
-  var a10 = readA16[0];
-  var a11 = readA16[1];
+   dest[0] = s1[0] + s2[0] + (LSBSum / 2 >>> 31);
+   dest[1] = LSBSum & 0xFFFFFFFF;
 
-  var b00 = readB16[2];
-  var b01 = readB16[3];
-  var b10 = readB16[0];
-  var b11 = readB16[1];
-
-  c00 = a00 + b00;
-  c01 = a01 + b01 + (c00 >>> 16);
-  c10 = a10 + b10 + (c01 >>> 16);
-  c11 = a11 + b11 + (c10 >>> 16);
-
-  write16[2] = c00;
-  write16[3] = c01;
-  write16[0] = c10;
-  write16[1] = c11;
+   return s1;
 }
 
 s[1] = 1;
