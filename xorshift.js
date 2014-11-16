@@ -1,32 +1,26 @@
 var s = new Uint32Array(4);
 
-function leftShift(read, write, amount) {
-  var s0 = read[0];
-  var s1 = read[1];
-
+function leftShift(write, readL, readU, amount) {
   var m = 0xFFFFFFFF << (32 - amount);
-  write[0] = (s0 << amount) | ((s1 & m) >>> (32 - amount));
-  write[1] = s1 << amount;
+  write[0] = (readL << amount) | ((readU & m) >>> (32 - amount));
+  write[1] = readU << amount;
 }
 
-function xor(readA, readB, write) {
-  write[0] = readA[0] ^ readB[0];
-  write[1] = readA[1] ^ readB[1];
+function xor(write, read1L, read1U, read2L, read2U) {
+  write[0] = read1L ^ read2L;
+  write[1] = read1U ^ read2U;
 }
 
-function rightShift(read, write, amount) {
-  var s0 = read[0];
-  var s1 = read[1];
-
+function rightShift(write, readL, readU, amount) {
   var m = 0xFFFFFFFF >>> (32 - amount);
-  write[1] = (s1 >>> amount) | ((s0 & m) << (32 - amount));
-  write[0] = s0 >>> amount;
+  write[0] = readL >>> amount;
+  write[1] = (readU >>> amount) | ((readL & m) << (32 - amount));
 }
 
-function add(readA, readB, write) {
-   var LSBSum = readA[1] + readB[1];
+function add(write, read1L, read1U, read2L, read2U) {
+   var LSBSum = read1U + read2U;
 
-   write[0] = readA[0] + readB[0] + (LSBSum / 2 >>> 31);
+   write[0] = read1L + read2L + (LSBSum / 2 >>> 31);
    write[1] = LSBSum & 0xFFFFFFFF;
 }
 
@@ -50,22 +44,24 @@ function xorshift() {
   s[1] = s0[1];
 
   // s1 ^= s1 << 23;
-  leftShift(s1, t1, 23);
-  xor(s1, t1, s1);
+  leftShift(t1, s1[0], s1[1], 23);
+  xor      (s1, s1[0], s1[1], t1[0], t1[1]);
 
   // k = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) )
-  xor(s1, s0, t1);
-  rightShift(s1, t2, 17);
-  xor(t1, t2, t1);
-  rightShift(s0, t2, 26);
-  xor(t1, t2, t1);
+  xor       (t1, s1[0], s1[1], s0[0], s0[1]);
+
+  rightShift(t2, s1[0], s1[1], 17);
+  xor       (t1, t1[0], t1[1], t2[0], t2[1]);
+
+  rightShift(t2, s0[0], s0[1], 26);
+  xor       (t1, t1[0], t1[1], t2[0], t2[1]);
 
   // s[1] = k
   s[2] = t1[0];
   s[3] = t1[1];
 
   // return k + s0
-  add(t1, s0, t2);
+  add(t2, t1[0], t1[1], s0[0], s0[1]);
 
   return t2;
 }
