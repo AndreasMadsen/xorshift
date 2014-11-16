@@ -23,11 +23,11 @@ function rightShift(read, write, amount) {
   write[0] = s0 >>> amount;
 }
 
-function add(s1, s2, dest) {
-   var LSBSum = s1[1] + s2[1];
+function add(readA, readB, write) {
+   var LSBSum = readA[1] + readB[1];
 
-   dest[0] = s1[0] + s2[0] + (LSBSum / 2 >>> 31);
-   dest[1] = LSBSum & 0xFFFFFFFF;
+   write[0] = readA[0] + readB[0] + (LSBSum / 2 >>> 31);
+   write[1] = LSBSum & 0xFFFFFFFF;
 }
 
 s[1] = 1;
