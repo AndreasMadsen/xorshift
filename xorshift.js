@@ -1,9 +1,9 @@
 var s = new Uint32Array(4);
 
-function leftShift(write, readU, readL, amoLnt) {
-  var m = 0xFFFFFFFF << (32 - amoLnt);
-  write[0] = (readU << amoLnt) | ((readL & m) >>> (32 - amoLnt));
-  write[1] = readL << amoLnt;
+function leftShift(write, readU, readL, amount) {
+  var m = 0xFFFFFFFF << (32 - amount);
+  write[0] = (readU << amount) | ((readL & m) >>> (32 - amount));
+  write[1] = readL << amount;
 }
 
 function xor(write, read1U, read1L, read2U, read2L) {
@@ -11,10 +11,10 @@ function xor(write, read1U, read1L, read2U, read2L) {
   write[1] = read1L ^ read2L;
 }
 
-function rightShift(write, readU, readL, amoLnt) {
-  var m = 0xFFFFFFFF >>> (32 - amoLnt);
-  write[0] = readU >>> amoLnt;
-  write[1] = (readL >>> amoLnt) | ((readU & m) << (32 - amoLnt));
+function rightShift(write, readU, readL, amount) {
+  var m = 0xFFFFFFFF >>> (32 - amount);
+  write[0] = readU >>> amount;
+  write[1] = (readL >>> amount) | ((readU & m) << (32 - amount));
 }
 
 function add(write, read1U, read1L, read2U, read2L) {
