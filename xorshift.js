@@ -30,38 +30,39 @@ s[3] = 2;
 var t1 = new Uint32Array(2);
 var t2 = new Uint32Array(2);
 
-var s1 = new Uint32Array(2);
-var s0 = new Uint32Array(2);
-
 function xorshift() {
-   // uint64_t s1 = s[ 0 ];
-   s1.set(s.subarray(0, 2));
-   // const uint64_t s0 = s[ 1 ];
-   s0.set(s.subarray(2, 4));
+  // uint64_t s1 = s[ 0 ];
+  var s1L = s[0], s1U = s[1];
+  // const uint64_t s0 = s[ 1 ];
+  var s0L = s[2], s0U = s[3];
 
   // s[ 0 ] = s0;
-  s[0] = s0[0];
-  s[1] = s0[1];
+  s[0] = s0L;
+  s[1] = s0U;
 
-  // s1 ^= s1 << 23;
-  leftShift(t1, s1[0], s1[1], 23);
-  xor      (s1, s1[0], s1[1], t1[0], t1[1]);
+  // k1 ^= s1 << 23;
+  leftShift(t1, s1L, s1U, 23);
+  xor      (t2, s1L, s1U, t1[0], t1[1]);
 
-  // k = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) )
-  xor       (t1, s1[0], s1[1], s0[0], s0[1]);
+  // s1 = k1
+  s1L = t2[0];
+  s1U = t2[1];
 
-  rightShift(t2, s1[0], s1[1], 17);
+  // k2 = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) )
+  xor       (t1, s1L, s1U, s0L, s0U);
+
+  rightShift(t2, s1L, s1U, 17);
   xor       (t1, t1[0], t1[1], t2[0], t2[1]);
 
-  rightShift(t2, s0[0], s0[1], 26);
+  rightShift(t2, s0L, s0U, 26);
   xor       (t1, t1[0], t1[1], t2[0], t2[1]);
 
-  // s[1] = k
+  // s[1] = k2
   s[2] = t1[0];
   s[3] = t1[1];
 
-  // return k + s0
-  add(t2, t1[0], t1[1], s0[0], s0[1]);
+  // return k2 + s0
+  add(t2, t1[0], t1[1], s0L, s0U);
 
   return t2;
 }
