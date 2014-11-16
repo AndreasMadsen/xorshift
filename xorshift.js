@@ -28,8 +28,6 @@ function add(s1, s2, dest) {
 
    dest[0] = s1[0] + s2[0] + (LSBSum / 2 >>> 31);
    dest[1] = LSBSum & 0xFFFFFFFF;
-
-   return s1;
 }
 
 s[1] = 1;
