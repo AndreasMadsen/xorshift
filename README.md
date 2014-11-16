@@ -1,4 +1,4 @@
-#xorshift
+#xorshift [![Build Status](https://travis-ci.org/AndreasMadsen/xorshift.svg?branch=number-args)](https://travis-ci.org/AndreasMadsen/xorshift)
 
 > Random number generator using xorshift
 
