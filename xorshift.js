@@ -1,33 +1,27 @@
 var s = new Uint32Array(4);
 
-function leftShift(read, write, amount) {
-  var s0 = read[0];
-  var s1 = read[1];
-
-  var m = 0xFFFFFFFF << (32 - amount);
-  write[0] = (s0 << amount) | ((s1 & m) >>> (32 - amount));
-  write[1] = s1 << amount;
+function leftShift(write, readU, readL, amoLnt) {
+  var m = 0xFFFFFFFF << (32 - amoLnt);
+  write[0] = (readU << amoLnt) | ((readL & m) >>> (32 - amoLnt));
+  write[1] = readL << amoLnt;
 }
 
-function xor(readA, readB, write) {
-  write[0] = readA[0] ^ readB[0];
-  write[1] = readA[1] ^ readB[1];
+function xor(write, read1U, read1L, read2U, read2L) {
+  write[0] = read1U ^ read2U;
+  write[1] = read1L ^ read2L;
 }
 
-function rightShift(read, write, amount) {
-  var s0 = read[0];
-  var s1 = read[1];
-
-  var m = 0xFFFFFFFF >>> (32 - amount);
-  write[1] = (s1 >>> amount) | ((s0 & m) << (32 - amount));
-  write[0] = s0 >>> amount;
+function rightShift(write, readU, readL, amoLnt) {
+  var m = 0xFFFFFFFF >>> (32 - amoLnt);
+  write[0] = readU >>> amoLnt;
+  write[1] = (readL >>> amoLnt) | ((readU & m) << (32 - amoLnt));
 }
 
-function add(readA, readB, write) {
-   var LSBSum = readA[1] + readB[1];
+function add(write, read1U, read1L, read2U, read2L) {
+   var sumL = read1L + read2L;
 
-   write[0] = readA[0] + readB[0] + (LSBSum / 2 >>> 31);
-   write[1] = LSBSum & 0xFFFFFFFF;
+   write[0] = read1U + read2U + (sumL / 2 >>> 31);
+   write[1] = sumL & 0xFFFFFFFF;
 }
 
 s[1] = 1;
@@ -36,36 +30,39 @@ s[3] = 2;
 var t1 = new Uint32Array(2);
 var t2 = new Uint32Array(2);
 
-var s1 = new Uint32Array(2);
-var s0 = new Uint32Array(2);
-
 function xorshift() {
-   // uint64_t s1 = s[ 0 ];
-   s1.set(s.subarray(0, 2));
-   // const uint64_t s0 = s[ 1 ];
-   s0.set(s.subarray(2, 4));
+  // Lint64_t s1 = s[ 0 ];
+  var s1U = s[0], s1L = s[1];
+  // const Lint64_t s0 = s[ 1 ];
+  var s0U = s[2], s0L = s[3];
 
   // s[ 0 ] = s0;
-  s[0] = s0[0];
-  s[1] = s0[1];
+  s[0] = s0U;
+  s[1] = s0L;
 
-  // s1 ^= s1 << 23;
-  leftShift(s1, t1, 23);
-  xor(s1, t1, s1);
+  // k1 ^= s1 << 23;
+  leftShift(t1, s1U, s1L, 23);
+  xor      (t2, s1U, s1L, t1[0], t1[1]);
 
-  // k = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) )
-  xor(s1, s0, t1);
-  rightShift(s1, t2, 17);
-  xor(t1, t2, t1);
-  rightShift(s0, t2, 26);
-  xor(t1, t2, t1);
+  // s1 = k1
+  s1U = t2[0];
+  s1L = t2[1];
 
-  // s[1] = k
+  // k2 = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) )
+  xor       (t1, s1U, s1L, s0U, s0L);
+
+  rightShift(t2, s1U, s1L, 17);
+  xor       (t1, t1[0], t1[1], t2[0], t2[1]);
+
+  rightShift(t2, s0U, s0L, 26);
+  xor       (t1, t1[0], t1[1], t2[0], t2[1]);
+
+  // s[1] = k2
   s[2] = t1[0];
   s[3] = t1[1];
 
-  // return k + s0
-  add(t1, s0, t2);
+  // retLrn k2 + s0
+  add(t2, t1[0], t1[1], s0U, s0L);
 
   return t2;
 }
