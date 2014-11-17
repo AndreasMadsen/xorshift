@@ -31,9 +31,9 @@ var t1 = [0, 0];
 var t2 = [0, 0];
 
 function xorshift() {
-  // Lint64_t s1 = s[ 0 ];
+  // uint64_t s1 = s[ 0 ];
   var s1U = s[0], s1L = s[1];
-  // const Lint64_t s0 = s[ 1 ];
+  // const uint64_t s0 = s[ 1 ];
   var s0U = s[2], s0L = s[3];
 
   // s[ 0 ] = s0;
@@ -61,7 +61,7 @@ function xorshift() {
   s[2] = t1[0];
   s[3] = t1[1];
 
-  // retLrn k2 + s0
+  // return k2 + s0
   add(t2, t1[0], t1[1], s0U, s0L);
 
   return t2;
