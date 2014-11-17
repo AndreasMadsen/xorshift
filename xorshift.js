@@ -74,3 +74,8 @@ module.exports = xorshift;
 
    return xorshift;
 };
+ module.exports.random = function() {
+   var r = xorshift();
+   //             2^32                 2^64
+   return (r[0] * 4294967296 + r[1]) / 18446744073709552000;
+};
