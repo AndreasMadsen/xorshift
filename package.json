@@ -3,6 +3,9 @@
   "description": "Random number generator using xorshift",
   "version": "0.1.0",
   "author": "Andreas Madsen <amwebdk@gmail.com>",
+  "contributors": [
+    "Emil Bay <github@tixz.dk>"
+  ],
   "main": "./xorshift.js",
   "scripts": {
     "test": "tap test.js",
