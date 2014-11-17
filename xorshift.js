@@ -1,29 +1,5 @@
 var s = [0, 0, 0, 0];
 
-function leftShift(write, readU, readL, amount) {
-  var m = 0xFFFFFFFF << (32 - amount);
-  write[0] = (readU << amount) | ((readL & m) >>> (32 - amount));
-  write[1] = readL << amount;
-}
-
-function xor(write, read1U, read1L, read2U, read2L) {
-  write[0] = read1U ^ read2U;
-  write[1] = read1L ^ read2L;
-}
-
-function rightShift(write, readU, readL, amount) {
-  var m = 0xFFFFFFFF >>> (32 - amount);
-  write[0] = readU >>> amount;
-  write[1] = (readL >>> amount) | ((readU & m) << (32 - amount));
-}
-
-function add(write, read1U, read1L, read2U, read2L) {
-   var sumL = (read1L >>> 0) + (read2L >>> 0);
-
-   write[0] = (read1U + read2U + (sumL / 2 >>> 31)) >>> 0;
-   write[1] = sumL >>> 0;
-}
-
 s[1] = 1;
 s[3] = 2;
 
@@ -41,28 +17,51 @@ function xorshift() {
   s[1] = s0L;
 
   // k1 ^= s1 << 23;
-  leftShift(t1, s1U, s1L, 23);
-  xor      (t2, s1U, s1L, t1[0], t1[1]);
+  // - leftShift(t1, s1U, s1L, 23);
+  var a1 = 23;
+  var m1 = 0xFFFFFFFF << (32 - a1);
+  t1[0] = (s1U << a1) | ((s1L & m1) >>> (32 - a1));
+  t1[1] = s1L << a1;
+  // - xor(t2, s1U, s1L, t1[0], t1[1]);
+  t2[0] = s1U ^ t1[0];
+  t2[1] = s1L ^ t1[1];
 
   // s1 = k1
   s1U = t2[0];
   s1L = t2[1];
 
   // k2 = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) )
-  xor       (t1, s1U, s1L, s0U, s0L);
+  // - xor(t1, s1U, s1L, s0U, s0L);
+  t1[0] = s1U ^ s0U;
+  t1[1] = s1L ^ s0L;
 
-  rightShift(t2, s1U, s1L, 17);
-  xor       (t1, t1[0], t1[1], t2[0], t2[1]);
+  // - rightShift(t2, s1U, s1L, 17);
+  var a2 = 17;
+  var m2 = 0xFFFFFFFF >>> (32 - a2);
+  t2[0] = s1U >>> a2;
+  t2[1] = (s1L >>> a2) | ((s1U & m2) << (32 - a2));
+  // - xor(t1, t1[0], t1[1], t2[0], t2[1]);
+  t1[0] = t1[0] ^ t2[0];
+  t1[1] = t1[1] ^ t2[1];
 
-  rightShift(t2, s0U, s0L, 26);
-  xor       (t1, t1[0], t1[1], t2[0], t2[1]);
+  // - rightShift(t2, s0U, s0L, 26);
+  var a3 = 26;
+  var m3 = 0xFFFFFFFF >>> (32 - a3);
+  t2[0] = s0U >>> a3;
+  t2[1] = (s0L >>> a3) | ((s0U & m3) << (32 - a3));
+  // - xor(t1, t1[0], t1[1], t2[0], t2[1]);
+  t1[0] = t1[0] ^ t2[0];
+  t1[1] = t1[1] ^ t2[1];
 
   // s[1] = k2
   s[2] = t1[0];
   s[3] = t1[1];
 
   // return k2 + s0
-  add(t2, t1[0], t1[1], s0U, s0L);
+  // - add(t2, t1[0], t1[1], s0U, s0L);
+  var sumL = (t1[1] >>> 0) + (s0L >>> 0);
+  t2[0] = (t1[0] + s0U + (sumL / 2 >>> 31)) >>> 0;
+  t2[1] = sumL >>> 0;
 
   return t2;
 }
