@@ -40,7 +40,7 @@ if random numbers in the stdout. The default value is `10`.
 
 **The software is license under "MIT"**
 
-> Copyright (c) 2014 Andreas Madsen & Emil Melgaard
+> Copyright (c) 2014 Andreas Madsen & Emil Bay
 >
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal
