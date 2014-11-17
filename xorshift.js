@@ -66,6 +66,13 @@ function xorshift() {
 }
 
 module.exports = xorshift;
+
+/**
+ * Set the internal state of the pseudorandom number generator. This allows the
+ * sequence of random numbers to be reproduced.
+ * @param {array} seed1 "64-bit" integer, composed of two 32-bit integers in big endian order
+ * @param {array} seed2 "64-bit" integer, composed of two 32-bit integers in big endian order
+ */
  module.exports.setSeed = function(seed1, seed2) {
    s[0] = seed1[0];
    s[1] = seed1[1];
@@ -74,6 +81,12 @@ module.exports = xorshift;
 
    return xorshift;
 };
+
+
+/**
+ * Returns a random number normalized [0, 1), just like Math.random()
+ * @return {number}
+ */
  module.exports.random = function() {
    var r = xorshift();
    //             2^32                 2^64
