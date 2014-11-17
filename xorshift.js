@@ -1,4 +1,4 @@
-var s = new Uint32Array(4);
+var s = [0, 0, 0, 0];
 
 function leftShift(write, readU, readL, amount) {
   var m = 0xFFFFFFFF << (32 - amount);
@@ -18,17 +18,17 @@ function rightShift(write, readU, readL, amount) {
 }
 
 function add(write, read1U, read1L, read2U, read2L) {
-   var sumL = read1L + read2L;
+   var sumL = (read1L >>> 0) + (read2L >>> 0);
 
-   write[0] = read1U + read2U + (sumL / 2 >>> 31);
-   write[1] = sumL & 0xFFFFFFFF;
+   write[0] = (read1U + read2U + (sumL / 2 >>> 31)) >>> 0;
+   write[1] = sumL >>> 0;
 }
 
 s[1] = 1;
 s[3] = 2;
 
-var t1 = new Uint32Array(2);
-var t2 = new Uint32Array(2);
+var t1 = [0, 0];
+var t2 = [0, 0];
 
 function xorshift() {
   // Lint64_t s1 = s[ 0 ];
