@@ -66,3 +66,11 @@ function xorshift() {
 }
 
 module.exports = xorshift;
+ module.exports.setSeed = function(seed1, seed2) {
+   s[0] = seed1[0];
+   s[1] = seed1[1];
+   s[2] = seed2[0];
+   s[3] = seed2[1];
+
+   return xorshift;
+};
