@@ -1,13 +1,14 @@
-var s = [0, 0, 0, 0];
 
-s[1] = 1;
-s[3] = 2;
+var state0 = 0, state1 = 0, state2 = 0, state3 = 0;
+
+state1 = 1;
+state3 = 2;
 
 function xorshift() {
   // uint64_t s1 = s[ 0 ];
-  var s1U = s[0], s1L = s[1];
+  var s1U = state0, s1L = state1;
   // const uint64_t s0 = s[ 1 ];
-  var s0U = s[2], s0L = s[3];
+  var s0U = state2, s0L = state3;
 
   // - t1 = [0, 0]
   var t1U = 0, t1L = 0;
@@ -15,8 +16,8 @@ function xorshift() {
   var t2U = 0, t2L = 0;
 
   // s[ 0 ] = s0;
-  s[0] = s0U;
-  s[1] = s0L;
+  state0 = s0U;
+  state1 = s0L;
 
   // k1 ^= s1 << 23;
   // - leftShift(t1, s1U, s1L, 23);
@@ -56,8 +57,8 @@ function xorshift() {
   t1L = t1L ^ t2L;
 
   // s[1] = k2
-  s[2] = t1U;
-  s[3] = t1L;
+  state2 = t1U;
+  state3 = t1L;
 
   // return k2 + s0
   // - add(t2, t1[0], t1[1], s0U, s0L);
