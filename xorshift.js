@@ -1,70 +1,68 @@
-var s = [0, 0, 0, 0];
 
-function leftShift(write, readU, readL, amount) {
-  var m = 0xFFFFFFFF << (32 - amount);
-  write[0] = (readU << amount) | ((readL & m) >>> (32 - amount));
-  write[1] = readL << amount;
-}
+// uint64_t s = [0, 0]
+var state0U = 0, state0L = 0, state1U = 0, state1L = 0;
 
-function xor(write, read1U, read1L, read2U, read2L) {
-  write[0] = read1U ^ read2U;
-  write[1] = read1L ^ read2L;
-}
-
-function rightShift(write, readU, readL, amount) {
-  var m = 0xFFFFFFFF >>> (32 - amount);
-  write[0] = readU >>> amount;
-  write[1] = (readL >>> amount) | ((readU & m) << (32 - amount));
-}
-
-function add(write, read1U, read1L, read2U, read2L) {
-   var sumL = (read1L >>> 0) + (read2L >>> 0);
-
-   write[0] = (read1U + read2U + (sumL / 2 >>> 31)) >>> 0;
-   write[1] = sumL >>> 0;
-}
-
-s[1] = 1;
-s[3] = 2;
-
-var t1 = [0, 0];
-var t2 = [0, 0];
+// s = [1, 2]
+state0L = 1;
+state1L = 2;
 
 function xorshift() {
-  // uint64_t s1 = s[ 0 ];
-  var s1U = s[0], s1L = s[1];
-  // const uint64_t s0 = s[ 1 ];
-  var s0U = s[2], s0L = s[3];
+  // uint64_t s1 = s[0]
+  var s1U = state0U, s1L = state0L;
+  // uint64_t s0 = s[1]
+  var s0U = state1U, s0L = state1L;
 
-  // s[ 0 ] = s0;
-  s[0] = s0U;
-  s[1] = s0L;
+  // s[0] = s0
+  state0U = s0U;
+  state0L = s0L;
 
-  // k1 ^= s1 << 23;
-  leftShift(t1, s1U, s1L, 23);
-  xor      (t2, s1U, s1L, t1[0], t1[1]);
+  // - t1 = [0, 0]
+  var t1U = 0, t1L = 0;
+  // - t2 = [0, 0]
+  var t2U = 0, t2L = 0;
 
-  // s1 = k1
-  s1U = t2[0];
-  s1L = t2[1];
+  // s1 ^= s1 << 23;
+  // :: t1 = s1 << 23
+  var a1 = 23;
+  var m1 = 0xFFFFFFFF << (32 - a1);
+  t1U = (s1U << a1) | ((s1L & m1) >>> (32 - a1));
+  t1L = s1L << a1;
+  // :: s1 = s1 ^ t1
+  s1U = s1U ^ t1U;
+  s1L = s1L ^ t1L;
 
-  // k2 = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) )
-  xor       (t1, s1U, s1L, s0U, s0L);
+  // t1 = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) )
+  // :: t1 = s1 ^ s0
+  t1U = s1U ^ s0U;
+  t1L = s1L ^ s0L;
+  // :: t2 = s1 >> 17
+  var a2 = 17;
+  var m2 = 0xFFFFFFFF >>> (32 - a2);
+  t2U = s1U >>> a2;
+  t2L = (s1L >>> a2) | ((s1U & m2) << (32 - a2));
+  // :: t1 = t1 ^ t2
+  t1U = t1U ^ t2U;
+  t1L = t1L ^ t2L;
+  // :: t2 = s0 >> 26
+  var a3 = 26;
+  var m3 = 0xFFFFFFFF >>> (32 - a3);
+  t2U = s0U >>> a3;
+  t2L = (s0L >>> a3) | ((s0U & m3) << (32 - a3));
+  // :: t1 = t1 ^ t2
+  t1U = t1U ^ t2U;
+  t1L = t1L ^ t2L;
 
-  rightShift(t2, s1U, s1L, 17);
-  xor       (t1, t1[0], t1[1], t2[0], t2[1]);
+  // s[1] = t1
+  state1U = t1U;
+  state1L = t1L;
 
-  rightShift(t2, s0U, s0L, 26);
-  xor       (t1, t1[0], t1[1], t2[0], t2[1]);
-
-  // s[1] = k2
-  s[2] = t1[0];
-  s[3] = t1[1];
-
-  // return k2 + s0
-  add(t2, t1[0], t1[1], s0U, s0L);
-
-  return t2;
+  // return t1 + s0
+  // :: t2 = t1 + s0
+  var sumL = (t1L >>> 0) + (s0L >>> 0);
+  t2U = (t1U + s0U + (sumL / 2 >>> 31)) >>> 0;
+  t2L = sumL >>> 0;
+  // :: ret t2
+  return [t2U, t2L];
 }
 
 module.exports = xorshift;
