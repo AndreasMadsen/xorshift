@@ -14,9 +14,21 @@ function hexview(arr) {
   return (a + b).toUpperCase();
 }
 
-test('state [1, 2]', function (t) {
+test('rand, with seed = [1, 2]', function (t) {
+  var rng = new xorshift.constructor([0, 1, 0, 2]);
+
   for (var i = 0; i < reference.length; i++) {
-    t.strictEqual(hexview(xorshift()), reference[i]);
+    t.equal(rng.rand(), parseInt(reference[i], 16) / Math.pow(2, 64));
+  }
+
+  t.end();
+});
+
+test('randint, with seed = [1, 2]', function (t) {
+  var rng = new xorshift.constructor([0, 1, 0, 2]);
+
+  for (var i = 0; i < reference.length; i++) {
+    t.strictEqual(hexview(rng.randint()), reference[i]);
   }
 
   t.end();
