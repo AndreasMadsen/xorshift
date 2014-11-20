@@ -1,20 +1,39 @@
 
-// uint64_t s = [0, 0]
-var state0U = 0, state0L = 0, state1U = 0, state1L = 0;
+/**
+ * Create a pseudorandom number generator, with a seed.
+ * @param {array} seed "128-bit" integer, composed of 4x32-bit integers in big endian order.
+ */
+function XorShift(seed) {
+  if (!Array.isArray(seed) || seed.length !== 4) {
+    throw new TypeError('seed must be array with 4 elements');
+  }
 
-// s = [1, 2]
-state0L = 1;
-state1L = 2;
+  // uint64_t s = [seed ...]
+  this._state0U = seed[0] | 0;
+  this._state0L = seed[1] | 0;
+  this._state1U = seed[2] | 0;
+  this._state1L = seed[3] | 0;
+}
 
-function xorshift() {
+// There is nothing particularly scientific about this seed, it is just
+// based on the clock.
+module.exports = new XorShift([
+  0, Date.now() / 65536,
+  0, Date.now() % 65536
+]);
+/**
+ * Returns a random number normalized [0, 1[, just like Math.random()
+ * @return {number}
+ */
+XorShift.prototype.randint = function() {
   // uint64_t s1 = s[0]
-  var s1U = state0U, s1L = state0L;
+  var s1U = this._state0U, s1L = this._state0L;
   // uint64_t s0 = s[1]
-  var s0U = state1U, s0L = state1L;
+  var s0U = this._state1U, s0L = this._state1L;
 
   // s[0] = s0
-  state0U = s0U;
-  state0L = s0L;
+  this._state0U = s0U;
+  this._state0L = s0L;
 
   // - t1 = [0, 0]
   var t1U = 0, t1L = 0;
@@ -53,42 +72,26 @@ function xorshift() {
   t1L = t1L ^ t2L;
 
   // s[1] = t1
-  state1U = t1U;
-  state1L = t1L;
+  this._state1U = t1U;
+  this._state1L = t1L;
 
-  // return t1 + s0
+  // return (t1 + s0) / 2**64
   // :: t2 = t1 + s0
   var sumL = (t1L >>> 0) + (s0L >>> 0);
   t2U = (t1U + s0U + (sumL / 2 >>> 31)) >>> 0;
   t2L = sumL >>> 0;
+
   // :: ret t2
   return [t2U, t2L];
-}
-
-module.exports = xorshift;
-
-/**
- * Set the internal state of the pseudorandom number generator. This allows the
- * sequence of random numbers to be reproduced.
- * @param {array} seed1 "64-bit" integer, composed of two 32-bit integers in big endian order
- * @param {array} seed2 "64-bit" integer, composed of two 32-bit integers in big endian order
- */
- module.exports.setSeed = function(seed1, seed2) {
-   s[0] = seed1[0];
-   s[1] = seed1[1];
-   s[2] = seed2[0];
-   s[3] = seed2[1];
-
-   return xorshift;
 };
 
-
 /**
- * Returns a random number normalized [0, 1), just like Math.random()
+ * Returns a random number normalized [0, 1[, just like Math.random()
  * @return {number}
  */
- module.exports.random = function() {
-   var r = xorshift();
-   //             2^32                 2^64
-   return (r[0] * 4294967296 + r[1]) / 18446744073709552000;
+XorShift.prototype.rand = function() {
+  var t2 = this.randint();
+
+  // :: ret t2 / 2**64
+  return (t2[0] * 4294967296 + t2[1]) / 18446744073709551616;
 };
