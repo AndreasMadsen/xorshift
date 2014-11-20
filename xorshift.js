@@ -75,7 +75,7 @@ XorShift.prototype.randint = function() {
   this._state1U = t1U;
   this._state1L = t1L;
 
-  // return (t1 + s0) / 2**64
+  // return t1 + s0
   // :: t2 = t1 + s0
   var sumL = (t1L >>> 0) + (s0L >>> 0);
   t2U = (t1U + s0U + (sumL / 2 >>> 31)) >>> 0;
