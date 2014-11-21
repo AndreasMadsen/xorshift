@@ -1,11 +1,20 @@
 
 /**
  * Create a pseudorandom number generator, with a seed.
- * @param {array} seed "128-bit" integer, composed of 4x32-bit integers in big endian order.
+ * @param {array} seed "128-bit" integer, composed of 4x32-bit
+ * integers in big endian order.
  */
 function XorShift(seed) {
+  // Note the extension, this === module.exports is required because
+  // the `constructor` function will be used to generate new instances.
+  // In that case `this` will point to the default RNG, and `this` will
+  // be an instance of XorShift.
+  if (!(this instanceof XorShift) || this === module.exports) {
+    return new XorShift(seed);
+  }
+
   if (!Array.isArray(seed) || seed.length !== 4) {
-    throw new TypeError('seed must be array with 4 elements');
+    throw new TypeError('seed must be an array with 4 numbers');
   }
 
   // uint64_t s = [seed ...]
@@ -15,17 +24,11 @@ function XorShift(seed) {
   this._state1L = seed[3] | 0;
 }
 
-// There is nothing particularly scientific about this seed, it is just
-// based on the clock.
-module.exports = new XorShift([
-  0, Date.now() / 65536,
-  0, Date.now() % 65536
-]);
 /**
- * Returns a random number normalized [0, 1[, just like Math.random()
- * @return {number}
+ * Returns a 64bit random number as a 2x32bit array
+ * @return {array}
  */
-XorShift.prototype.randint = function() {
+XorShift.prototype.randomint = function() {
   // uint64_t s1 = s[0]
   var s1U = this._state0U, s1L = this._state0L;
   // uint64_t s0 = s[1]
@@ -86,12 +89,29 @@ XorShift.prototype.randint = function() {
 };
 
 /**
- * Returns a random number normalized [0, 1[, just like Math.random()
+ * Returns a random number normalized [0, 1), just like Math.random()
  * @return {number}
  */
-XorShift.prototype.rand = function() {
-  var t2 = this.randint();
+XorShift.prototype.random = function() {
+  var t2 = this.randomint();
 
   // :: ret t2 / 2**64
   return (t2[0] * 4294967296 + t2[1]) / 18446744073709551616;
 };
+
+
+// There is nothing particularly scientific about this seed, it is just
+// based on the clock.
+module.exports = new XorShift([
+  0, Date.now() / 65536,
+  0, Date.now() % 65536
+]);
+
+// Perform 20 iterations in the RNG, this prevens a short seed from generating
+// pseudo predictable number.
+(function () {
+  var rng = module.exports;
+  for (var i = 0; i < 20; i++) {
+    rng.randomint();
+  }
+})();
