@@ -4,7 +4,7 @@ var n = process.argv[2] || 5e7;
 
 var tick = process.hrtime();
 while(n--) {
-   xorshift();
+   xorshift.random();
 }
 var tock = process.hrtime(tick);
 
