@@ -1,40 +1,112 @@
 #xorshift [![Build Status](https://travis-ci.org/AndreasMadsen/xorshift.svg?branch=master)](https://travis-ci.org/AndreasMadsen/xorshift)
 
-> Random number generator using xorshift
+> Random number generator using xorshift128+
 
 ## Installation
 
 ```sheel
-NOT YET PUBLISHED # npm install xorshift
+# npm install xorshift
+```
+
+## Example
+
+```javascript
+var xorshift = require('xorshift');
+
+for (var i = 0; i < 10; i++) {
+  console.log(xorshift.random()); // number in range [0, 1)
+}
 ```
 
 ## Documentation
 
-```javascript
-var xorshift = require('xorshift')
-var bview = require('binary-view');
+This module exports a default pseudo random generator. This generators seed have
+already been set (using `Date.now()`). If this is not suitable a custom
+generator can be initialized using the constructor function
+`xorshift.constructor`. In both cases random numbers can be generated using
+the two methods, `.random` and `.randomint`.
 
-for (var i = 0; i < 10; i++) {
-  console.log(bview(xorshift()));
-}
+```javascript
+var xorshift = require('xorshift');
 ```
 
-## Testing
+### xorshift.random()
 
-This repo also contains an reference implementation of the 128bit xorshift.
-First you should compile the code.
+This method returns a random 64bit double, with its value in the range [0, 1).
+That means 0 is inclusive and 1 is exclusive. This is completely similar to
+`Math.random()`.
+
+```javascript
+console.log(xorshift.random()); // number between 0 and 1
+```
+
+This method will serve most purposes, for instance to randomly select between
+2, 3 and 4, this function can be used:
+
+```javascript
+function uniformint(a, b) {
+  return Math.floor(a + xorshift().random() * (b - a));
+}
+
+console.log(uniformint(2, 4));
+```
+
+### xorshift.randomint()
+
+This method returns a random 64bit integer. Since JavaScript don't support
+64bit integers, the number is represented as an array with two elements in
+big-endian order.
+
+This method is useful if high precision is required, the `xorshift.random()`
+method won't allow you to get this precision since a 64bit IEEE754 double
+only contains the 52 most significant bits.
+
+```javascript
+var bview = require('binary-view');
+console.log(bview( new Uint32Array(xorshift.randomint()) ));
+```
+
+### xorshift.constructor
+
+This method is used to construct a new random generator, with a specific seed.
+This can be useful when testing software where random numbers are involved and
+getting consistent results are important.
+
+```javascript
+var XorShift = require('xorshift').constructor;
+var rng1 = new XorShift([1, 0, 2, 0]);
+var rng2 = new XorShift([1, 0, 2, 0]);
+
+assert(rng1.random() === rng2.random());
+```
+
+A `XorShift` instance have both methods `random` and `randomint`. In fact the
+`xorshift` module is an instance of the `XorShift` constructor.
+
+## Reference
+
+This module implements the xorshift128+ pseudo random number generator.
+
+> This is the fastest generator passing BigCrush without systematic
+> errors, but due to the relatively short period it is acceptable only
+> for applications with a very mild amount of parallelism; otherwise, use
+> a xorshift1024* generator.
+> – <cite> http://xorshift.di.unimi.it </cite>
+
+This source also have a
+[reference implementation](http://xorshift.di.unimi.it/xorshift128plus.c)
+for the xorshift128+ generator. A wrapper around this implementation have been
+created and is used for testing this module. To compile and run it:
 
 ```shell
 gcc -O2 reference.c -o reference
+./reference <numbers> <seed0> <seed1>
 ```
 
-Next you should execute the binary
-```shell
-./reference <numbers>
-```
-
-`<numbers>` can be any number greater than zero, and it will be the amount
+* `<numbers>` can be any number greater than zero, and it will be the amount
 if random numbers in the stdout. The default value is `10`.
+* `<seed0>` and `<seed1>` forms the 128bit seed that the algorithm uses. Default
+is `[1, 2]`.
 
 ##License
 
