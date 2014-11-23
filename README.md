@@ -57,6 +57,10 @@ This method returns a random 64bit integer. Since JavaScript don't support
 64bit integers, the number is represented as an array with two elements in
 big-endian order.
 
+This method is useful if high precision is required, the `xorshift.random()`
+method won't allow you to get this precision since a 64bit IEEE754 double
+only contains the 52 most significant bits.
+
 ```javascript
 var bview = require('binary-view');
 console.log(bview( new Uint32Array(xorshift.randomint()) ));
