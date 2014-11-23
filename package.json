@@ -1,6 +1,6 @@
 {
   "name": "xorshift",
-  "description": "Random number generator using xorshift",
+  "description": "Random number generator using xorshift128+",
   "version": "0.1.0",
   "author": "Andreas Madsen <amwebdk@gmail.com>",
   "contributors": [

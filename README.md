@@ -1,6 +1,6 @@
 #xorshift [![Build Status](https://travis-ci.org/AndreasMadsen/xorshift.svg?branch=master)](https://travis-ci.org/AndreasMadsen/xorshift)
 
-> Random number generator using xorshift
+> Random number generator using xorshift128+
 
 ## Installation
 
@@ -79,17 +79,23 @@ assert(rng1.random() === rng2.random());
 A `XorShift` instance have both methods `random` and `randomint`. In fact the
 `xorshift` module is an instance of the `XorShift` constructor.
 
-## Testing
+## Reference
 
-This repo also contains an reference implementation of the 128bit xorshift.
-First you should compile the code.
+This module implements the xorshift128+ pseudo random number generator.
+
+> This is the fastest generator passing BigCrush without systematic
+> errors, but due to the relatively short period it is acceptable only
+> for applications with a very mild amount of parallelism; otherwise, use
+> a xorshift1024* generator.
+> – <cite> http://xorshift.di.unimi.it </cite>
+
+This source also have a
+[reference implementation](http://xorshift.di.unimi.it/xorshift128plus.c)
+for the xorshift128+ generator. A wrapper around this implementation have been
+created and is used for testing this module. To compile and run it:
 
 ```shell
 gcc -O2 reference.c -o reference
-```
-
-Next you should execute the binary
-```shell
 ./reference <numbers> <seed0> <seed1>
 ```
 
