@@ -24,7 +24,7 @@ This module exports a default pseudo random generator. This generators seed have
 already been set (using `Date.now()`). If this is not suitable a custom
 generator can be initialized using the constructor function
 `xorshift.constructor`. In both cases random numbers can be generated using
-two methods, `.random` and `.randomint`.
+the two methods, `.random` and `.randomint`.
 
 ```javascript
 var xorshift = require('xorshift');
