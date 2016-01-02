@@ -14,22 +14,30 @@ function hexview(arr) {
   return (a + b).toUpperCase();
 }
 
+function floatview(d) {
+  // Makes sure that the exponent has two digets like in C-printf
+  var s = d.toExponential(20);
+  var m = s.match(/^([0-9.]+)e(\+|-)([0-9]+)$/);
+  var e = (m[3].length === 1) ? '0' + m[3] : m[3];
+  return m[1] + 'e' + m[2] + e;
+}
+
 test('random double', function (t) {
   t.test('with seed = [1, 2]', function (t) {
-    var ref = reference['1-2'];
+    var ref = reference.double['1-2'];
     var rng = xorshift.constructor([0, 1, 0, 2]);
     for (var i = 0; i < ref.length; i++) {
-      t.equal(rng.random(), parseInt(ref[i], 16) / Math.pow(2, 64));
+      t.equal(floatview(rng.random()), ref[i]);
     }
 
     t.end();
   });
 
   t.test('with seed = [3, 4]', function (t) {
-    var ref = reference['3-4'];
+    var ref = reference.double['3-4'];
     var rng = xorshift.constructor([0, 3, 0, 4]);
     for (var i = 0; i < ref.length; i++) {
-      t.equal(rng.random(), parseInt(ref[i], 16) / Math.pow(2, 64));
+      t.equal(floatview(rng.random()), ref[i]);
     }
 
     t.end();
@@ -40,7 +48,7 @@ test('random double', function (t) {
 
 test('random int array', function (t) {
   t.test('with seed = [1, 2]', function (t) {
-    var ref = reference['1-2'];
+    var ref = reference.integer['1-2'];
     var rng = xorshift.constructor([0, 1, 0, 2]);
     for (var i = 0; i < ref.length; i++) {
       t.strictEqual(hexview(rng.randomint()), ref[i]);
@@ -50,7 +58,7 @@ test('random int array', function (t) {
   });
 
   t.test('with seed = [3, 4]', function (t) {
-    var ref = reference['3-4'];
+    var ref = reference.integer['3-4'];
     var rng = xorshift.constructor([0, 3, 0, 4]);
     for (var i = 0; i < ref.length; i++) {
       t.strictEqual(hexview(rng.randomint()), ref[i]);

@@ -92,13 +92,35 @@ XorShift.prototype.randomint = function() {
  * Returns a random number normalized [0, 1), just like Math.random()
  * @return {number}
  */
+var CONVERTION_BUFFER = new Buffer(8);
 XorShift.prototype.random = function() {
+  // :: t2 = randomint()
   var t2 = this.randomint();
+  var t2U = t2[0];
+  var t2L = t2[1];
 
-  // :: ret t2 / 2**64
-  return (t2[0] * 4294967296 + t2[1]) / 18446744073709551616;
+  // :: e = UINT64_C(0x3FF) << 52
+  var eU = 0x3FF << (52 - 32);
+  var eL = 0;
+
+  // :: s = t2 >> 12
+  var a1 = 12;
+  var m1 = 0xFFFFFFFF >>> (32 - a1);
+  sU = t2U >>> a1;
+  sL = (t2L >>> a1) | ((t2U & m1) << (32 - a1));
+
+  // :: x = e | s
+  var xU = eU | sU;
+  var xL = eL | sL;
+
+  // :: double d = *((double *)&x)
+  CONVERTION_BUFFER.writeUInt32BE(xU, 0, true);
+  CONVERTION_BUFFER.writeUInt32BE(xL, 4, true);
+  var d = CONVERTION_BUFFER.readDoubleBE(0, true);
+
+  // :: d - 1
+  return d - 1;
 };
-
 
 // There is nothing particularly scientific about this seed, it is just
 // based on the clock.
