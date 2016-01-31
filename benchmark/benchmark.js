@@ -1,10 +1,10 @@
-var xorshift = require('../xorshift128+');
+var rng = require('../xorshift128plus');
 
-var n = process.argv[2] || 5e7;
+var n = process.argv[2] || 25e7;
 
 var tick = process.hrtime();
 while (n--) {
-  xorshift.random();
+  rng.randomInt();
 }
 var tock = process.hrtime(tick);
 

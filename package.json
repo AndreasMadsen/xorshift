@@ -17,15 +17,15 @@
     "LICENSE.md",
     "package.json",
     "README.md",
-    "xorshift128+.js"
+    "xorshift128plus.js"
   ],
-  "main": "./xorshift128+.js",
+  "main": "./xorshift128plus.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/AndreasMadsen/xorshift.git"
   },
   "scripts": {
-    "benchmark": "node ./benchmark.js",
+    "benchmark": "node ./benchmark/benchmark.js",
     "lint": "semistandard",
     "test": "tap --cov test/index.js"
   },
