@@ -1,10 +1,9 @@
-
 /**
  * Create a pseudorandom number generator, with a seed.
  * @param {array} seed "128-bit" integer, composed of 4x32-bit
  * integers in big endian order.
  */
-function XorShift(seed) {
+function XorShift (seed) {
   // Note the extension, this === module.exports is required because
   // the `constructor` function will be used to generate new instances.
   // In that case `this` will point to the default RNG, and `this` will
@@ -28,20 +27,24 @@ function XorShift(seed) {
  * Returns a 64bit random number as a 2x32bit array
  * @return {array}
  */
-XorShift.prototype.randomint = function() {
+XorShift.prototype.randomint = function () {
   // uint64_t s1 = s[0]
-  var s1U = this._state0U, s1L = this._state0L;
+  var s1U = this._state0U;
+  var s1L = this._state0L;
   // uint64_t s0 = s[1]
-  var s0U = this._state1U, s0L = this._state1L;
+  var s0U = this._state1U;
+  var s0L = this._state1L;
 
   // s[0] = s0
   this._state0U = s0U;
   this._state0L = s0L;
 
   // - t1 = [0, 0]
-  var t1U = 0, t1L = 0;
+  var t1U = 0;
+  var t1L = 0;
   // - t2 = [0, 0]
-  var t2U = 0, t2L = 0;
+  var t2U = 0;
+  var t2L = 0;
 
   // s1 ^= s1 << 23;
   // :: t1 = s1 << 23
@@ -93,7 +96,7 @@ XorShift.prototype.randomint = function() {
  * @return {number}
  */
 var CONVERTION_BUFFER = new Buffer(8);
-XorShift.prototype.random = function() {
+XorShift.prototype.random = function () {
   // :: t2 = randomint()
   var t2 = this.randomint();
   var t2U = t2[0];
@@ -106,8 +109,8 @@ XorShift.prototype.random = function() {
   // :: s = t2 >> 12
   var a1 = 12;
   var m1 = 0xFFFFFFFF >>> (32 - a1);
-  sU = t2U >>> a1;
-  sL = (t2L >>> a1) | ((t2U & m1) << (32 - a1));
+  var sU = t2U >>> a1;
+  var sL = (t2L >>> a1) | ((t2U & m1) << (32 - a1));
 
   // :: x = e | s
   var xU = eU | sU;
