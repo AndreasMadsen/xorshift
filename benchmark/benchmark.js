@@ -1,4 +1,4 @@
-var rng = require('../xorshift128plus');
+var rng = require('../');
 
 var n = process.argv[2] || 25e7;
 

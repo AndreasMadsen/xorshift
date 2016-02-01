@@ -1,5 +1,5 @@
 var test = require('tap').test;
-var xorshift = require('../xorshift128plus.js');
+var xorshift = require('../');
 
 var util = require('./util');
 var reference = require('../reference/xorshift128plus.json');
@@ -24,12 +24,12 @@ test('bad initialization', function (t) {
 
 test('default instance', function (t) {
   t.test('random int', function (t) {
-    // demand that the 1000 first outputs are different
+    // demand that the 100 first outputs are different
     var obj = Object.create(null);
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 100; i++) {
       obj[util.hexview(xorshift.randomInt())] = 1;
     }
-    t.equal(Object.keys(obj).length, 1000);
+    t.equal(Object.keys(obj).length, 100);
     t.end();
   });
 
@@ -65,6 +65,28 @@ test('random int array', function (t) {
       t.strictEqual(util.hexview(rng.randomInt()), ref[i]);
     }
 
+    t.end();
+  });
+
+  t.end();
+});
+
+test('random bytes', function (t) {
+  var ref = reference.integer['1-2'];
+
+  t.test('size mod 8 equal 0 (with seed = [1, 2])', function (t) {
+    var rng = new xorshift.XorShift128Plus([0, 1, 0, 2]);
+    var buffer = rng.randomBytes(16);
+
+    t.equal(buffer.toString('hex'), ref[0] + ref[1]);
+    t.end();
+  });
+
+  t.test('size mod 8 equal 3 (with seed = [1, 2])', function (t) {
+    var rng = new xorshift.XorShift128Plus([0, 1, 0, 2]);
+    var buffer = rng.randomBytes(19);
+
+    t.equal(buffer.toString('hex'), ref[0] + ref[1] + ref[2].slice(0, 6));
     t.end();
   });
 
