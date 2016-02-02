@@ -30,6 +30,7 @@
     "test": "tap --cov test/index.js"
   },
   "devDependencies": {
+    "benchmark": "^2.1.0",
     "semistandard": "^7.0.5",
     "tap": "^5.4.0"
   }
