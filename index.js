@@ -10,7 +10,7 @@ var rng = new XorShift128Plus([
 // Perform 20 iterations in the RNG,
 //   this prevens a short seed from generating pseudo predictable number.
 for (var i = 0; i < 20; i++) {
-  rng.randomInt();
+  rng._random();
 }
 
 module.exports = rng;
