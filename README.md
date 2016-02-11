@@ -1,10 +1,13 @@
-#xorshift [![Build Status](https://travis-ci.org/AndreasMadsen/xorshift.svg?branch=master)](https://travis-ci.org/AndreasMadsen/xorshift)
+#xorshift
 
-> Pseudorandom number generator using [xorshift128+](http://xorshift.di.unimi.it/)
+[![NPM Package](https://img.shields.io/npm/v/xorshift.svg?style=flat-square)](https://www.npmjs.org/package/xorshift)
+[![Build Status](https://img.shields.io/travis/AndreasMadsen/xorshift.svg?branch=master&style=flat-square)](https://travis-ci.org/AndreasMadsen/xorshift)
+
+> Pseudorandom number generator using [xorshift](http://xorshift.di.unimi.it/) (available xorshift128+ and xorshift1024*)
 
 ## Installation
 
-```bash
+```shell
 npm install xorshift
 ```
 
@@ -20,17 +23,41 @@ for (var i = 0; i < 10; i++) {
 
 ## Documentation
 
-This module exports a default pseudo random generator. This generators seed have
-already been set (using `Date.now()`). If this is not suitable a custom
-generator can be initialized using the constructor function
-`xorshift.constructor`. In both cases random numbers can be generated using
-the two methods `.random` and `.randomint`.
+This module exports a default PRNG. This generators seed have already been set (using `Date.now()`).
+If this is not suitable a custom generator can be initialized using the function `xorshift.XorShift128Plus` or `xorshift.XorShift1024Star`.
 
 ```javascript
 var xorshift = require('xorshift');
 ```
 
-### xorshift.random()
+#### XorShift128Plus(Array seed)
+
+This method is used to construct a new PRNG, with a specific seed.
+This is useful when testing software where random numbers are involved and getting consistent results is important.
+
+```javascript
+var XorShift128Plus = require('xorshift').XorShift128Plus;
+var prng1 = new XorShift128Plus([1, 0, 2, 0]);
+var prng2 = new XorShift128Plus([1, 0, 2, 0]);
+
+assert(prng1.random() === prng2.random());
+```
+
+#### XorShift1024Star(Array seed, number p)
+
+Another xorshift PRNG with longer period (2**1024 - 1), but slower.
+
+```javascript
+var XorShift128Plus = require('xorshift').XorShift128Plus;
+var seed = [ 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3,
+             0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3];
+var prng1 = new XorShift1024Star(seed, 1);
+var prng2 = new XorShift1024Star(seed, 1);
+
+assert(prng1.random() === prng2.random());
+```
+
+#### random()
 
 This method returns a random 64-bit double, with its value in the range [0, 1).
 That means 0 is inclusive and 1 is exclusive. This is equivalent to
@@ -51,7 +78,7 @@ function uniformint(a, b) {
 console.log(uniformint(2, 4));
 ```
 
-### xorshift.randomint()
+#### randomInt64(XorShift prng)
 
 This method returns a random 64-bit integer. Since JavaScript doesn't support
 64-bit integers, the number is represented as an array with two elements in
@@ -63,71 +90,20 @@ only contains the 52 most significant bits.
 
 ```javascript
 var bview = require('binary-view');
-console.log(bview( new Uint32Array(xorshift.randomint()) ));
+var xorshiftUtil = require('xorshift/util');
+console.log(bview( new Uint32Array(xorshiftUtil.randomInt64(xorshift)) ));
 ```
 
-### xorshift.constructor
+#### randomBytes(XorShift prng, number size)
 
-This method is used to construct a new random generator, with a specific seed.
-This is useful when testing software where random numbers are involved and
-getting consistent results is important.
+This method return `Buffer` with length `size` filled by random bytes.
 
 ```javascript
-var XorShift = require('xorshift').constructor;
-var rng1 = new XorShift([1, 0, 2, 0]);
-var rng2 = new XorShift([1, 0, 2, 0]);
-
-assert(rng1.random() === rng2.random());
+var xorshiftUtil = require('xorshift/util');
+var buffer = xorshiftUtil.randomBytes(xorshift, 32)
+console.log(buffer.toString('hex'))
 ```
 
-A `XorShift` instance have both methods `random` and `randomint`. In fact the
-`xorshift` module is an instance of the `XorShift` constructor.
+## License
 
-## Reference
-
-This module implements the xorshift128+ pseudo random number generator.
-
-> This is the fastest generator passing BigCrush without systematic
-> errors, but due to the relatively short period it is acceptable only
-> for applications with a very mild amount of parallelism; otherwise, use
-> a xorshift1024* generator.
-> – <cite> http://xorshift.di.unimi.it </cite>
-
-This source also has a
-[reference implementation](http://xorshift.di.unimi.it/xorshift128plus.c)
-for the xorshift128+ generator. A wrapper around this implementation has been
-created and is used for testing this module. To compile and run it:
-
-```shell
-gcc -O2 reference.c -o reference
-./reference <numbers> <seed0> <seed1>
-```
-
-* `<numbers>` can be any number greater than zero, and it will be the number
-of random numbers written to `stdout`. The default value is `10`.
-* `<seed0>` and `<seed1>` forms the 128bit seed that the algorithm uses. Default
-is `[1, 2]`.
-
-##License
-
-**This software is licensed under "MIT"**
-
-> Copyright (c) 2014 Andreas Madsen & Emil Bay
->
-> Permission is hereby granted, free of charge, to any person obtaining a copy
-> of this software and associated documentation files (the "Software"), to deal
-> in the Software without restriction, including without limitation the rights
-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-> copies of the Software, and to permit persons to whom the Software is
-> furnished to do so, subject to the following conditions:
->
-> The above copyright notice and this permission notice shall be included in
-> all copies or substantial portions of the Software.
->
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-> THE SOFTWARE.
+MIT

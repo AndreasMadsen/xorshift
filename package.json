@@ -1,27 +1,47 @@
 {
   "name": "xorshift",
-  "description": "Random number generator using xorshift128+",
   "version": "0.2.0",
+  "description": "Random number generator using xorshift",
+  "keywords": [
+    "random",
+    "prng",
+    "xorshift",
+    "xorshift128+",
+    "xorshift128plus",
+    "xorshift1024*",
+    "xorshift1024star"
+  ],
+  "license": "MIT",
   "author": "Andreas Madsen <amwebdk@gmail.com>",
   "contributors": [
-    "Emil Bay <github@tixz.dk>"
+    "Emil Bay <github@tixz.dk>",
+    "Kirill Fomichev <fanatid@ya.ru> (https://github.com/fanatid)"
   ],
-  "main": "./xorshift.js",
-  "scripts": {
-    "test": "tap test.js",
-    "benchmark": "node ./benchmark.js"
-  },
-  "repository" : {
+  "files": [
+    "lib",
+    "index.js",
+    "LICENSE.md",
+    "package.json",
+    "README.md",
+    "util.js"
+  ],
+  "main": "./index.js",
+  "repository": {
     "type": "git",
     "url": "git://github.com/AndreasMadsen/xorshift.git"
   },
-  "keywords": [
-    "random",
-    "rng",
-    "xorshift"
-  ],
-  "devDependencies": {
-    "tap": "0.4.x"
+  "scripts": {
+    "lint": "semistandard",
+    "test": "tap --cov test/**/*.js",
+    "test:compile": "$CC test/xorshift.c -o test/xorshift -std=c99"
   },
-  "license": "MIT"
+  "dependencies": {
+    "inherits": "^2.0.1"
+  },
+  "devDependencies": {
+    "benchmark": "^2.1.0",
+    "semistandard": "^7.0.5",
+    "spawn-sync": "^1.0.15",
+    "tap": "^5.4.0"
+  }
 }

@@ -1,4 +1,27 @@
+sudo: false
+os:
+  - linux
 language: node_js
 node_js:
-  - "0.11"
   - "0.10"
+  - "0.11"
+  - "0.12"
+  - "4"
+  - "5"
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.8
+before_script:
+  - CC=gcc-4.8 npm run test:compile
+env:
+  matrix:
+    - TEST_SUITE=test
+matrix:
+  include:
+    - os: linux
+      node_js: "4"
+      env: TEST_SUITE=lint
+script: npm run $TEST_SUITE
