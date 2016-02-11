@@ -4,9 +4,10 @@
   "description": "Random number generator using xorshift128+",
   "keywords": [
     "random",
-    "rng",
+    "prng",
     "xorshift",
-    "xorshift128+"
+    "xorshift128+",
+    "xorshift128plus"
   ],
   "license": "MIT",
   "author": "Andreas Madsen <amwebdk@gmail.com>",
@@ -33,5 +34,8 @@
     "benchmark": "^2.1.0",
     "semistandard": "^7.0.5",
     "tap": "^5.4.0"
+  },
+  "dependencies": {
+    "inherits": "^2.0.1"
   }
 }
