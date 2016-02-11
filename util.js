@@ -13,7 +13,7 @@ exports.randomInt64 = function randomInt64 (prng) {
  */
 exports.randomSafeInt = function randomSafeInt (prng) {
   var data = prng._random();
-  return (data[0] & 0x001fffff) * 0xffffffff + data[1];
+  return (data[0] & 0x001fffff) * 0xffffffff + data[1]; // TODO: make rsh on 12 bits
 };
 
 /**

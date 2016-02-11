@@ -28,14 +28,15 @@
   "scripts": {
     "benchmark": "node ./benchmark/benchmark.js",
     "lint": "semistandard",
-    "test": "tap --cov test/index.js"
+    "test": "tap --cov test/index.js",
+    "test:compile": "$CC test/xorshift.c -o test/xorshift"
+  },
+  "dependencies": {
+    "inherits": "^2.0.1"
   },
   "devDependencies": {
     "benchmark": "^2.1.0",
     "semistandard": "^7.0.5",
     "tap": "^5.4.0"
-  },
-  "dependencies": {
-    "inherits": "^2.0.1"
   }
 }
