@@ -29,7 +29,7 @@
     "benchmark": "node ./benchmark/benchmark.js",
     "lint": "semistandard",
     "test": "tap --cov test/**/*.js",
-    "test:compile": "$CC test/xorshift.c -o test/xorshift"
+    "test:compile": "$CC test/xorshift.c -o test/xorshift -std=c99"
   },
   "dependencies": {
     "inherits": "^2.0.1"

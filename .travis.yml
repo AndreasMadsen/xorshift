@@ -8,6 +8,14 @@ node_js:
   - "0.12"
   - "4"
   - "5"
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.8
+before_script:
+  - CC=gcc-4.8 npm run test:compile
 env:
   matrix:
     - TEST_SUITE=test
