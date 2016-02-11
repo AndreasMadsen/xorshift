@@ -17,4 +17,5 @@ for (var i = 0; i < 20; i++) {
 
 module.exports = prng;
 module.exports.XorShift = require('./lib/xorshift');
-module.exports.XorShift128Plus = XorShift128Plus;
+module.exports.XorShift128Plus = require('./lib/xorshift128plus');
+module.exports.XorShift1024Star = require('./lib/xorshift1024star');
