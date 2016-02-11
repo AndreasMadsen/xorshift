@@ -62,8 +62,9 @@ int main(int argc, char *argv[]) {
     }
 
     for (; count > 0; --count) {
-        printf("0x%016llx\n", xorshift());
+        printf("%016llx", xorshift());
     }
+    printf("\n");
 
     return 0;
 }

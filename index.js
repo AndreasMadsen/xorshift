@@ -1,3 +1,5 @@
+'use strict';
+
 var XorShift128Plus = require('./lib/xorshift128plus');
 
 // There is nothing particularly scientific about this seed,

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @param {XorShift} prng
  * @return {U: number, L: number}

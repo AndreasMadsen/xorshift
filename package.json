@@ -28,7 +28,7 @@
   "scripts": {
     "benchmark": "node ./benchmark/benchmark.js",
     "lint": "semistandard",
-    "test": "tap --cov test/index.js",
+    "test": "tap --cov test/**/*.js",
     "test:compile": "$CC test/xorshift.c -o test/xorshift"
   },
   "dependencies": {
