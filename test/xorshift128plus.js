@@ -4,7 +4,7 @@ var tap = require('tap');
 var XorShift = require('../lib/xorshift');
 var XorShift128Plus = require('../lib/xorshift128plus');
 
-var fixtures = require('./fixtures')
+var fixtures = require('./fixtures');
 
 tap.test('XorShift128Plus', function (t) {
   t.test('initialization', function (t) {

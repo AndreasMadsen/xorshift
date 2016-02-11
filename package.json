@@ -37,6 +37,7 @@
   "devDependencies": {
     "benchmark": "^2.1.0",
     "semistandard": "^7.0.5",
+    "spawn-sync": "^1.0.15",
     "tap": "^5.4.0"
   }
 }
