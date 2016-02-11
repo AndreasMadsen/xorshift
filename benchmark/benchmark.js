@@ -5,7 +5,7 @@ benchmark.options.minTime = 1;
 
 var seed = new Array(32);
 for (var i = 0; i < seed.length; ++i) {
-  seed[i] = (Math.random() * 100) | 0
+  seed[i] = (Math.random() * 100) | 0;
 }
 
 /**

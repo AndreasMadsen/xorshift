@@ -1,32 +1,36 @@
 {
   "name": "xorshift",
   "version": "0.2.0",
-  "description": "Random number generator using xorshift128+",
+  "description": "Random number generator using xorshift",
   "keywords": [
     "random",
     "prng",
     "xorshift",
     "xorshift128+",
-    "xorshift128plus"
+    "xorshift128plus",
+    "xorshift1024*",
+    "xorshift1024star"
   ],
   "license": "MIT",
   "author": "Andreas Madsen <amwebdk@gmail.com>",
   "contributors": [
-    "Emil Bay <github@tixz.dk>"
+    "Emil Bay <github@tixz.dk>",
+    "Kirill Fomichev <fanatid@ya.ru> (https://github.com/fanatid)"
   ],
   "files": [
+    "lib",
+    "index.js",
     "LICENSE.md",
     "package.json",
     "README.md",
-    "xorshift128plus.js"
+    "util.js"
   ],
-  "main": "./xorshift128plus.js",
+  "main": "./index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/AndreasMadsen/xorshift.git"
   },
   "scripts": {
-    "benchmark": "node ./benchmark/benchmark.js",
     "lint": "semistandard",
     "test": "tap --cov test/**/*.js",
     "test:compile": "$CC test/xorshift.c -o test/xorshift -std=c99"
