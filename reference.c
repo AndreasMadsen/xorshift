@@ -7,11 +7,13 @@
 uint64_t s[ 2 ];
 
 uint64_t xorshift128plus_int(void) {
-	uint64_t s1 = s[ 0 ];
-	const uint64_t s0 = s[ 1 ];
-	s[ 0 ] = s0;
-	s1 ^= s1 << 23;
-	return ( s[ 1 ] = ( s1 ^ s0 ^ ( s1 >> 17 ) ^ ( s0 >> 26 ) ) ) + s0;
+	uint64_t s1 = s[0];
+	const uint64_t s0 = s[1];
+	const uint64_t result = s0 + s1;
+	s[0] = s0;
+	s1 ^= s1 << 23; // a
+	s[1] = s1 ^ s0 ^ (s1 >> 18) ^ (s0 >> 5); // b, c
+	return result;
 }
 
 double xorshift128plus_double(void) {
