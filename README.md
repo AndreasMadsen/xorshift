@@ -1,4 +1,4 @@
-#xorshift [![Build Status](https://travis-ci.org/AndreasMadsen/xorshift.svg?branch=master)](https://travis-ci.org/AndreasMadsen/xorshift)
+# xorshift [![Build Status](https://travis-ci.org/AndreasMadsen/xorshift.svg?branch=master)](https://travis-ci.org/AndreasMadsen/xorshift)
 
 > Pseudorandom number generator using [xorshift128+](http://xorshift.di.unimi.it/)
 
@@ -108,7 +108,7 @@ of random numbers written to `stdout`. The default value is `10`.
 * `<seed0>` and `<seed1>` forms the 128bit seed that the algorithm uses. Default
 is `[1, 2]`.
 
-##License
+## License
 
 **This software is licensed under "MIT"**
 
