@@ -36,8 +36,8 @@ XorShift.prototype.randomint = function() {
 
   // result = s0 + s1
   var sumL = (s0L >>> 0) + (s1L >>> 0);
-  resU = (s0U + s1U + (sumL / 2 >>> 31)) >>> 0;
-  resL = sumL >>> 0;
+  var resU = (s0U + s1U + (sumL / 2 >>> 31)) >>> 0;
+  var resL = sumL >>> 0;
 
   // s[0] = s0
   this._state0U = s0U;
