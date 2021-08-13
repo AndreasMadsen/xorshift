@@ -83,6 +83,13 @@ assert(rng1.random() === rng2.random());
 A `XorShift` instance have both methods `random` and `randomint`. In fact the
 `xorshift` module is an instance of the `XorShift` constructor.
 
+The constructor can also be accessed as `require('xorshift').XorShift`, which
+is useful when using the `import` syntax.
+
+```javascript
+import { XorShift } from 'xorshift'
+```
+
 ## Reference
 
 This module implements the xorshift128+ pseudo random number generator.
