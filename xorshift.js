@@ -108,3 +108,7 @@ module.exports = new XorShift([
   getRandomSeed(),
   getRandomSeed()
 ]);
+
+// Export constructor under its own name so that consumers using ES2015
+// can write `import { XorShift } from 'xorshift'`.
+module.exports.XorShift = XorShift;

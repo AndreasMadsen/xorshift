@@ -120,3 +120,8 @@ test('bad initialization', function (t) {
 
   t.end();
 });
+
+test('constructor export', function (t) {
+  t.equal(xorshift.constructor, xorshift.XorShift);
+  t.end();
+});
