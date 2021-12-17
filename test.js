@@ -1,6 +1,6 @@
 
 var test = require('tap').test;
-var xorshift = require('./xorshift.js');
+var xorshift = require('.').default;
 
 var reference = require('./reference.json');
 

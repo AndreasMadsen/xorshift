@@ -1,4 +1,4 @@
-var xorshift = require('./xorshift');
+var xorshift = require('.').default;
 
 var n = process.argv[2] || 5e7;
 
