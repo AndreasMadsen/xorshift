@@ -101,7 +101,7 @@ test('bad initialization', function (t) {
     } catch (e) { error = e; }
 
     t.equal(error.name, 'TypeError');
-    t.equal(error.message, 'seed must be an array with 4 numbers');
+    t.match(error.message, /^seed must be an array with 4 numbers/);
     t.end();
   });
 
@@ -112,7 +112,7 @@ test('bad initialization', function (t) {
     } catch (e) { error = e; }
 
     t.equal(error.name, 'TypeError');
-    t.equal(error.message, 'seed must be an array with 4 numbers');
+    t.match(error.message, /^seed must be an array with 4 numbers/);
     t.end();
   });
 
