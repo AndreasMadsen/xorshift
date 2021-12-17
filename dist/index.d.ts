@@ -49,13 +49,20 @@ export declare let xorshift: XorShift & {
 	 */
 	constructor(seed: ISeedLooser): XorShift;
 };
+export declare function notSeed(seed: ISeedLooser): seed is ISeed;
+export declare function assertSeed(seed: ISeedLooser): asserts seed is ISeed;
+export declare function handleSeed(seed: ISeedLooser): ISeed;
 /**
  * Create a pseudorandom number generator, with a seed.
  * @param {array} seed "128-bit" integer, composed of 4x32-bit
  * integers in big endian order.
  */
 export declare const XorShift: IXorShiftConstructor;
-export declare function getRandomSeed(): number;
+/**
+ * Seed with Math.random() by default to prevent seed collision
+ */
+export declare function getRandomSeedEntry(): number;
+export declare function getRandomSeedAuto(seed?: ISeedLooser): ISeed;
 export default xorshift;
 
 export {};

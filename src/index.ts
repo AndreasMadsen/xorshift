@@ -44,6 +44,28 @@ let xorshift: XorShift & {
   constructor(seed: ISeedLooser): XorShift
 };
 
+export function notSeed(seed: ISeedLooser): seed is ISeed
+{
+  return (!Array.isArray(seed) || seed.length < 4 || seed.some((n, i) => i < 4 && typeof n !== 'number'))
+}
+
+export function assertSeed(seed: ISeedLooser): asserts seed is ISeed
+{
+  if (notSeed(seed)) {
+    throw new TypeError(`seed must be an array with 4 numbers: ${seed}`);
+  }
+}
+
+export function handleSeed(seed: ISeedLooser): ISeed
+{
+  return [
+    seed[0] | 0,
+    seed[1] | 0,
+    seed[2] | 0,
+    seed[3] | 0,
+  ]
+}
+
 /**
  * Create a pseudorandom number generator, with a seed.
  * @param {array} seed "128-bit" integer, composed of 4x32-bit
@@ -60,22 +82,18 @@ export const XorShift: IXorShiftConstructor = function XorShift(this: XorShift, 
     return new XorShift(seed);
   }
 
-  if (!Array.isArray(seed) || seed.length !== 4) {
-    throw new TypeError('seed must be an array with 4 numbers');
-  }
+  assertSeed(seed);
 
   // uint64_t s = [seed ...]
-  this._state0U = seed[0] | 0;
-  this._state0L = seed[1] | 0;
-  this._state1U = seed[2] | 0;
-  this._state1L = seed[3] | 0;
+  ([this._state0U, this._state0L, this._state1U, this._state1L] = handleSeed(seed));
+
 } as any
 
 /**
  * Returns a 64bit random number as a 2x32bit array
  * @return {array}
  */
-XorShift.prototype.randomint = function() {
+XorShift.prototype.randomint = function(this: XorShift) {
   // uint64_t s1 = s[0]
   let s1U = this._state0U, s1L = this._state0L;
   // uint64_t s0 = s[1]
@@ -138,24 +156,38 @@ XorShift.prototype.randomint = function() {
  * Returns a random number normalized [0, 1), just like Math.random()
  * @return {number}
  */
-XorShift.prototype.random = function() {
-  var t2 = this.randomint();
+XorShift.prototype.random = function(this: XorShift) {
+  const t2 = this.randomint();
   // Math.pow(2, -32) = 2.3283064365386963e-10
   // Math.pow(2, -52) = 2.220446049250313e-16
   return t2[0] * 2.3283064365386963e-10 + (t2[1] >>> 12) * 2.220446049250313e-16;
 };
 
-// Seed with Math.random() by default to prevent seed collision
-export function getRandomSeed() {
+/**
+ * Seed with Math.random() by default to prevent seed collision
+ */
+export function getRandomSeedEntry() {
     return Math.random() * Math.pow(2, 32);
 }
 
-xorshift = new XorShift([
-  getRandomSeed(),
-  getRandomSeed(),
-  getRandomSeed(),
-  getRandomSeed()
-]) as any
+export function getRandomSeedAuto(seed?: ISeedLooser)
+{
+  seed ??= [];
+  // @ts-ignore
+  seed[0] ??= getRandomSeedEntry();
+  // @ts-ignore
+  seed[1] ??= getRandomSeedEntry();
+  // @ts-ignore
+  seed[2] ??= getRandomSeedEntry();
+  // @ts-ignore
+  seed[3] ??= getRandomSeedEntry();
+
+  assertSeed(seed);
+
+  return seed
+}
+
+xorshift = new XorShift(getRandomSeedAuto()) as any
 
 // @ts-ignore
 xorshift.XorShift = XorShift;

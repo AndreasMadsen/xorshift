@@ -1,17 +1,22 @@
 let xorshift;
+function notSeed(seed) {
+  return !Array.isArray(seed) || seed.length < 4 || seed.some((n, i) => i < 4 && typeof n !== 'number');
+}
+function assertSeed(seed) {
+  if (notSeed(seed)) {
+    throw new TypeError(`seed must be an array with 4 numbers: ${seed}`);
+  }
+}
+function handleSeed(seed) {
+  return [seed[0] | 0, seed[1] | 0, seed[2] | 0, seed[3] | 0];
+}
 const XorShift = function XorShift(seed) {
   if (!new.target && (!(this instanceof XorShift) || this === xorshift)) {
     return new XorShift(seed);
   }
 
-  if (!Array.isArray(seed) || seed.length !== 4) {
-    throw new TypeError('seed must be an array with 4 numbers');
-  }
-
-  this._state0U = seed[0] | 0;
-  this._state0L = seed[1] | 0;
-  this._state1U = seed[2] | 0;
-  this._state1L = seed[3] | 0;
+  assertSeed(seed);
+  [this._state0U, this._state0L, this._state1U, this._state1L] = handleSeed(seed);
 };
 
 XorShift.prototype.randomint = function () {
@@ -54,16 +59,27 @@ XorShift.prototype.randomint = function () {
 };
 
 XorShift.prototype.random = function () {
-  var t2 = this.randomint();
+  const t2 = this.randomint();
   return t2[0] * 2.3283064365386963e-10 + (t2[1] >>> 12) * 2.220446049250313e-16;
 };
 
-function getRandomSeed() {
+function getRandomSeedEntry() {
   return Math.random() * Math.pow(2, 32);
 }
-xorshift = /*#__PURE__*/new XorShift([/*#__PURE__*/getRandomSeed(), /*#__PURE__*/getRandomSeed(), /*#__PURE__*/getRandomSeed(), /*#__PURE__*/getRandomSeed()]);
+function getRandomSeedAuto(seed) {
+  var _seed, _seed2, _, _seed2$_, _seed3, _2, _seed3$_, _seed4, _3, _seed4$_, _seed5, _4, _seed5$_;
+
+  (_seed = seed) !== null && _seed !== void 0 ? _seed : seed = [];
+  (_seed2$_ = (_seed2 = seed)[_ = 0]) !== null && _seed2$_ !== void 0 ? _seed2$_ : _seed2[_] = getRandomSeedEntry();
+  (_seed3$_ = (_seed3 = seed)[_2 = 1]) !== null && _seed3$_ !== void 0 ? _seed3$_ : _seed3[_2] = getRandomSeedEntry();
+  (_seed4$_ = (_seed4 = seed)[_3 = 2]) !== null && _seed4$_ !== void 0 ? _seed4$_ : _seed4[_3] = getRandomSeedEntry();
+  (_seed5$_ = (_seed5 = seed)[_4 = 3]) !== null && _seed5$_ !== void 0 ? _seed5$_ : _seed5[_4] = getRandomSeedEntry();
+  assertSeed(seed);
+  return seed;
+}
+xorshift = /*#__PURE__*/new XorShift( /*#__PURE__*/getRandomSeedAuto());
 xorshift.XorShift = XorShift;
 var xorshift$1 = xorshift;
 
-export { XorShift, xorshift$1 as default, getRandomSeed, xorshift };
+export { XorShift, assertSeed, xorshift$1 as default, getRandomSeedAuto, getRandomSeedEntry, handleSeed, notSeed, xorshift };
 //# sourceMappingURL=index.esm.mjs.map
