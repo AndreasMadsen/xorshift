@@ -1,8 +1,6 @@
-
-var test = require('tap').test;
-var xorshift = require('.').default;
-
-var reference = require('./reference.json');
+import reference from './reference.json' assert { type: 'json' };
+import xorshift from './dist/index.esm.mjs';
+import { test } from 'tap';
 
 function hexview(arr) {
   var a = arr[0].toString(16);

@@ -1,27 +1,77 @@
 {
   "name": "xorshift",
-  "description": "Random number generator using xorshift128+",
   "version": "1.2.0",
-  "author": "Andreas Madsen <amwebdk@gmail.com>",
-  "contributors": [
-    "Emil Bay <github@tixz.dk>"
+  "description": "Random number generator using xorshift128+",
+  "keywords": [
+    "random",
+    "rng",
+    "xorshift",
+    "create-by-yarn-tool",
+    "create-by-tsdx"
   ],
-  "main": "./xorshift.js",
-  "scripts": {
-    "test": "tap test.js",
-    "benchmark": "node ./benchmark.js"
+  "homepage": "https://github.com/AndreasMadsen/xorshift#readme",
+  "bugs": {
+    "url": "https://github.com/AndreasMadsen/xorshift/issues"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/AndreasMadsen/xorshift.git"
   },
-  "keywords": [
-    "random",
-    "rng",
-    "xorshift"
+  "license": "MIT",
+  "author": "Andreas Madsen <amwebdk@gmail.com>",
+  "contributors": [
+    "Emil Bay <github@tixz.dk>"
   ],
-  "devDependencies": {
-    "tap": "0.4.x"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.mjs",
+      "require": "./dist/index.cjs"
+    }
   },
-  "license": "MIT"
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.mjs",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "pretest": "yarn run build",
+    "test": "yarn run test:tap && yarn run test:tap:esm",
+    "test:tap": "tap test.js",
+    "test:tap:esm": "node --enable-source-maps --experimental-json-modules test.mjs",
+    "posttest": "echo posttest",
+    "build": "yarn run build:tsdx && yarn run build:dts",
+    "build:dts": "ynpx dts-bundle-generator -o ./dist/index.d.ts ./src/index.ts --no-banner & echo build:dts",
+    "build:tsdx": "ynpx @bluelovers/tsdx build --target node --name index",
+    "npm:publish": "npm publish",
+    "npm:publish:bump": "yarn run version:bump && npm publish",
+    "preversion": "echo preversion && yarn run test",
+    "version": "echo version",
+    "version:bump": "yarn-tool version",
+    "postversion": "echo postversion",
+    "prepublish": "echo prepublish",
+    "prepublishOnly": "yarn run preversion",
+    "prepublishOnly:check-bin": "ynpx --quiet @yarn-tool/check-pkg-bin",
+    "prepublishOnly:update": "yarn run ncu && yarn run sort-package-json",
+    "publish": "echo publish",
+    "postpublish": "yarn run postpublish:changelog && yarn run postpublish:git:commit && yarn run postpublish:git:tag && yarn run postpublish:git:push",
+    "postpublish:changelog": "ynpx --quiet @yarn-tool/changelog && git add ./CHANGELOG.md",
+    "postpublish:git:commit": "git commit -m \"chore(release): publish\" . & echo postpublish:git:commit",
+    "postpublish:git:push": "git push --follow-tags",
+    "postpublish:git:tag": "ynpx --quiet @yarn-tool/tag",
+    "postpublishOnly": "echo postpublishOnly",
+    "benchmark": "node ./benchmark.js",
+    "ncu": "yarn-tool ncu -u",
+    "sort-package-json": "yarn-tool sort",
+    "tsc:showConfig": "ynpx get-current-tsconfig -p"
+  },
+  "devDependencies": {
+    "@bluelovers/tsconfig": "^1.0.28",
+    "@types/node": "^17.0.0",
+    "@types/tap": "^15.0.5",
+    "tap": "15.1.x"
+  },
+  "packageManager": "yarn@^1.22.11"
 }
