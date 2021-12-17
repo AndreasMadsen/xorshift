@@ -11,7 +11,7 @@ npm install xorshift
 ## Example
 
 ```javascript
-var xorshift = require('xorshift');
+var xorshift = require('xorshift').default;
 
 for (var i = 0; i < 10; i++) {
   console.log(xorshift.random()); // number in range [0, 1)
@@ -27,7 +27,7 @@ generator can be initialized using the constructor function
 the two methods `.random` and `.randomint`.
 
 ```javascript
-var xorshift = require('xorshift');
+var xorshift = require('xorshift').default;
 ```
 
 ### xorshift.random()
@@ -73,7 +73,7 @@ This is useful when testing software where random numbers are involved and
 getting consistent results is important.
 
 ```javascript
-var XorShift = require('xorshift').constructor;
+var XorShift = require('xorshift').default.constructor;
 var rng1 = new XorShift([1, 0, 2, 0]);
 var rng2 = new XorShift([1, 0, 2, 0]);
 

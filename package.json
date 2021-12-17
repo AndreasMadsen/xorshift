@@ -39,7 +39,7 @@
   "scripts": {
     "pretest": "yarn run build",
     "test": "yarn run test:tap && yarn run test:tap:esm",
-    "test:tap": "tap test.js",
+    "test:tap": "tap --no-coverage test.js",
     "test:tap:esm": "node --enable-source-maps --experimental-json-modules test.mjs",
     "posttest": "echo posttest",
     "build": "yarn run build:tsdx && yarn run build:dts",
@@ -71,6 +71,7 @@
     "@bluelovers/tsconfig": "^1.0.28",
     "@types/node": "^17.0.0",
     "@types/tap": "^15.0.5",
+    "binary-view": "^0.2.0",
     "tap": "15.1.x"
   },
   "packageManager": "yarn@^1.22.11"

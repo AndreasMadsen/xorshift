@@ -9,9 +9,10 @@ export declare type ISeed = [
 	number,
 	number
 ];
+export declare type ISeedLooser = ISeed | number[] | readonly number[];
 export interface IXorShiftConstructor {
-	(seed: ISeed): XorShift;
-	new (seed: ISeed): XorShift;
+	(seed: ISeedLooser): XorShift;
+	new (seed: ISeedLooser): XorShift;
 }
 export interface XorShift {
 	_state0U: number;
@@ -38,7 +39,7 @@ export declare let xorshift: XorShift & {
 	 * @param {array} seed "128-bit" integer, composed of 4x32-bit
 	 * integers in big endian order.
 	 */
-	XorShift(seed: ISeed): XorShift;
+	XorShift(seed: ISeedLooser): XorShift;
 	/**
 	 * Create a pseudorandom number generator, with a seed.
 	 * @param {array} seed "128-bit" integer, composed of 4x32-bit
@@ -46,7 +47,7 @@ export declare let xorshift: XorShift & {
 	 *
 	 * @alias XorShift
 	 */
-	constructor(seed: ISeed): XorShift;
+	constructor(seed: ISeedLooser): XorShift;
 };
 /**
  * Create a pseudorandom number generator, with a seed.
